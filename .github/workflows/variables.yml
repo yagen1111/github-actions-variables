@@ -21,4 +21,4 @@ jobs:
     - name: echo
       run: docker info
     - name: run
-      run: docker run ${{matrix.os}}
+      run: docker run ${{matrix.images}}
