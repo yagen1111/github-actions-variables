@@ -1,27 +1,30 @@
-name: Workflow Demo
+name: Docker Cross-Platform Test
 
 on: 
   push:
+  pull_request:
   workflow_dispatch: 
 
 jobs:
-  build:
+  docker-test:
     strategy:
       fail-fast: false
-      max-parallel: 2
       matrix:
-        os: [ubuntu-latest, ubuntu-20.04, windows-latest]
-        images: [hello-world, alpine]
+        os: [ubuntu-latest, windows-latest]
+        image: [hello-world, mcr.microsoft.com/windows/nanoserver:ltsc2022]
         exclude:
-          - images: alpine
-            os: windows-latest
-        include:
-          - images: amd64/alpine
-            os: ubuntu-20.04
-    runs-on: ${{matrix.os}}
+          - os: ubuntu-latest
+            image: mcr.microsoft.com/windows/nanoserver:ltsc2022
+          - os: windows-latest
+            image: hello-world
+    
+    runs-on: ${{ matrix.os }}
+    
     steps:
-    - name: echo
-      run: docker info
-
-    - name: run image on ${{matrix.os}}
-      run: docker run ${{matrix.images}}
+    - uses: actions/checkout@v4
+    
+    - name: Test Docker image
+      run: docker run --rm ${{ matrix.image }}
+      
+    - name: Verify Docker functionality
+      run: docker ps -a
