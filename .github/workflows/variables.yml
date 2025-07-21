@@ -1,8 +1,10 @@
 name: Workflow Demo
 
 on: 
-  schedule:
-    - cron: "*/1 * * * *"
+  workflow_dispatch: 
+    
+  # schedule:
+  #   - cron: "*/1 * * * *"
 
 env:
   ACCESS_ID: ${{ secrets.ACCESS_ID }}
