@@ -4,21 +4,24 @@ on:
   push:
   workflow_dispatch: 
 
-  # schedule:
-  #   - cron: "*/1 * * * *"
-
-env:
-  ACCESS_ID: ${{ secrets.ACCESS_ID }}
-
 jobs:
   build:
     strategy:
+      fail-fast: false
+      max-parallel: 2
       matrix:
         os: [ubuntu-latest, ubuntu-20.04, windows-latest]
         images: [hello-world, alpine]
+        exclude:
+          - images: alpine
+            os: windows-latest
+        include:
+          - images: amd64/alpine
+            os: ubuntu-20.04
     runs-on: ${{matrix.os}}
     steps:
     - name: echo
       run: docker info
-    - name: run
+
+    - name: run image on ${{matrix.os}}
       run: docker run ${{matrix.images}}
